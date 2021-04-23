@@ -31,11 +31,20 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isCounting = true;
+
+  void toggleCounting() {
+    setState((){
+      isCounting = !isCounting;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +58,28 @@ class _MyHomePageState extends State<MyHomePage> {
             return Text('Counting: $count');
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+
+          print('alive 1');
+
+          toggleCounting();
+          print('is counting: ' + (isCounting ? 'yes' : 'no'));
+          if(isCounting){
+            var channel = const MethodChannel('com.example/background_service');
+            var callbackHandle = PluginUtilities.getCallbackHandle(backgroundMain);
+            channel.invokeMethod('stopService', callbackHandle.toRawHandle());
+            CounterService.instance().stopCounting();
+          }else{
+            var channel = const MethodChannel('com.example/background_service');
+            var callbackHandle = PluginUtilities.getCallbackHandle(backgroundMain);
+            channel.invokeMethod('startService', callbackHandle.toRawHandle());
+            CounterService.instance().startCounting();
+          }
+        },
+        child: Text('Start / Stop'),
+        backgroundColor: Colors.green,
       ),
     );
   }

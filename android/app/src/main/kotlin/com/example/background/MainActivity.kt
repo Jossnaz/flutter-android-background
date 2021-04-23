@@ -22,6 +22,11 @@ class MainActivity : FlutterActivity() {
                     val callbackRawHandle = method.arguments as Long
                     BackgroundService.startService(this@MainActivity, callbackRawHandle)
                     result.success(null)
+                } else if (method.method == "stopService") {
+                    println("inside kotlin hello2")
+                    val callbackRawHandle = method.arguments as Long
+                    BackgroundService.stopService(this@MainActivity, callbackRawHandle)
+                    result.success(null)
                 } else {
                     result.notImplemented()
                 }

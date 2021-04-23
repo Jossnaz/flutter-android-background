@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'counter.dart';
@@ -11,12 +13,18 @@ class CounterService {
 
   final _counter = Counter();
 
+  static StreamSubscription<dynamic> countStream;
+
   ValueListenable<int> get count => _counter.count;
 
   void startCounting() {
-    Stream.periodic(Duration(seconds: 1)).listen((_) {
+    countStream = Stream.periodic(Duration(seconds: 1)).listen((_) {
       _counter.increment();
       print('Counter incremented: ${_counter.count.value}');
     });
+  }
+
+  void stopCounting() {
+    countStream.cancel();
   }
 }

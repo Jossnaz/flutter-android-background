@@ -89,6 +89,7 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
         prefs.edit().putLong(KEY_CALLBACK_RAW_HANDLE, handle).apply()
     }
 
+
     companion object {
         private const val SHARED_PREFERENCES_NAME = "com.example.BackgroundService"
 
@@ -100,6 +101,15 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
             }
             ContextCompat.startForegroundService(context, intent)
         }
+
+        fun stopService(context: Context, callbackRawHandle: Long) {
+                    val intent = Intent(context, BackgroundService::class.java).apply {
+            putExtra(KEY_CALLBACK_RAW_HANDLE, callbackRawHandle)
+        };
+            context.stopService(intent);
+        }
+
+
     }
 
 }
