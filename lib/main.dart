@@ -62,9 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
 
-          print('alive 1');
 
-          toggleCounting();
           print('is counting: ' + (isCounting ? 'yes' : 'no'));
           if(isCounting){
             var channel = const MethodChannel('com.example/background_service');
@@ -77,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
             channel.invokeMethod('startService', callbackHandle.toRawHandle());
             CounterService.instance().startCounting();
           }
+          toggleCounting();
         },
         child: Text('Start / Stop'),
         backgroundColor: Colors.green,
