@@ -24,6 +24,12 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
         LifecycleDetector.listener = this
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        BackgroundService.stopService(this@MainActivity, null)
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.getLongExtra(KEY_CALLBACK_RAW_HANDLE, -1)?.let { callbackRawHandle ->
             if (callbackRawHandle != -1L) setCallbackRawHandle(callbackRawHandle)
@@ -102,10 +108,16 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
             ContextCompat.startForegroundService(context, intent)
         }
 
-        fun stopService(context: Context, callbackRawHandle: Long) {
-                    val intent = Intent(context, BackgroundService::class.java).apply {
-            putExtra(KEY_CALLBACK_RAW_HANDLE, callbackRawHandle)
-        };
+        fun stopService(context: Context, callbackRawHandle: Long? = null) {
+            val intent: Intent;
+
+            if(callbackRawHandle != null){
+                intent = Intent(context, BackgroundService::class.java).apply {
+                    putExtra(KEY_CALLBACK_RAW_HANDLE, callbackRawHandle)
+                }
+            }else{
+                intent = Intent(context, BackgroundService::class.java);
+            }
             context.stopService(intent);
         }
 
