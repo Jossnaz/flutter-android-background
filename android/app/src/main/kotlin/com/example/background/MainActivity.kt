@@ -11,6 +11,11 @@ class MainActivity : FlutterActivity() {
         Notifications.createNotificationChannels(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        BackgroundService.stopService(this@MainActivity, null)
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 

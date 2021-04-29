@@ -25,11 +25,6 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
-        BackgroundService.stopService(this@MainActivity, null)
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.getLongExtra(KEY_CALLBACK_RAW_HANDLE, -1)?.let { callbackRawHandle ->
             if (callbackRawHandle != -1L) setCallbackRawHandle(callbackRawHandle)
@@ -99,10 +94,15 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
     companion object {
         private const val SHARED_PREFERENCES_NAME = "com.example.BackgroundService"
 
+        private var callbackRawHandle: Long? = null;
+
         private const val KEY_CALLBACK_RAW_HANDLE = "callbackRawHandle"
 
         fun startService(context: Context, callbackRawHandle: Long) {
-            val intent = Intent(context, BackgroundService::class.java).apply {
+            this.callbackRawHandle = callbackRawHandle;
+            val intent: Intent;
+
+            intent = Intent(context, BackgroundService::class.java).apply {
                 putExtra(KEY_CALLBACK_RAW_HANDLE, callbackRawHandle)
             }
             ContextCompat.startForegroundService(context, intent)
@@ -110,13 +110,10 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
 
         fun stopService(context: Context, callbackRawHandle: Long? = null) {
             val intent: Intent;
+            val cbr = this.callbackRawHandle;
 
-            if(callbackRawHandle != null){
-                intent = Intent(context, BackgroundService::class.java).apply {
-                    putExtra(KEY_CALLBACK_RAW_HANDLE, callbackRawHandle)
-                }
-            }else{
-                intent = Intent(context, BackgroundService::class.java);
+            intent = Intent(context, BackgroundService::class.java).apply {
+                putExtra(KEY_CALLBACK_RAW_HANDLE, cbr)
             }
             context.stopService(intent);
         }
